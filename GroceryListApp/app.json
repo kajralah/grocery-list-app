@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "GroceryListApp",
+    "slug": "GroceryListApp",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "GroceryListApp"
+}
