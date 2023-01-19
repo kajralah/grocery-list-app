@@ -1,29 +1,20 @@
-import { StatusBar } from 'expo-status-bar';
-import React, {useState} from 'react';
-import { View, StyleSheet, Text,TextInput, TouchableOpacity, ScrollView } from 'react-native';
-//import {addHobies} from ‘../helpers/sqlHelper’
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import AddRecipe from "./src/components/AddRecipe";
+import HomeView from "./src/components/HomeView";
 
-export default function App() {
-let formData = []
-    const [name, setName] = useState('');
-    const [hobby, setHobby] = useState('');
+const Stack = createNativeStackNavigator();
 
+export default function App({navigation}) {
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.title}>
-                Add recipe
-            </Text>
-            <TextInput style={styles.inp}
-            placeholder={"Name"}
-            onChangeText={(val) => setName(val)}
-             value={name}
-            />
-            <TextInput style={styles.inp}
-            placeholder={"Hobby"}
-            onChangeText={(val) => setHobby(val)}
-            value={hobby}
-            />
-        </ScrollView>
+        <NavigationContainer>
+             <Stack.Navigator>
+               <Stack.Screen name="Recipes" component={HomeView} />
+               <Stack.Screen name="Add Recipe" component={AddRecipe} />
+             </Stack.Navigator>
+        </NavigationContainer>
     );
 }
 
@@ -32,15 +23,5 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center'
-  },
-  title: {
-  fontSize: 30
-  },
-  inp: {
-      height: 40,
-      width: 200,
-      margin: 12,
-      borderWidth: 1,
-      padding: 10,
   }
 });
