@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import { View, Button, StyleSheet, Text,TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Button, StyleSheet, Text, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import globalStyles from '../styles/style';
 import {NavigationContainer} from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
-import {insertRecipe, createTables, getDBConnection} from '../helpers/DatabaseHelper';
+import {insertRecipe, createTables} from '../helpers/DatabaseHelper';
 import { openDatabase } from 'react-native-sqlite-storage';
+import { GiBeveledStar } from 'react-icons/gi';
 
 const dbConnection = openDatabase({ name: 'Recipes.db' });
 
@@ -13,7 +14,14 @@ export default function HomeView({navigation}) {
        navigation.navigate('AddRecipe');
     };
 
+    const navigateToRecipe = (recipeID) => {
+        navigation.navigate('ViewRecipe', {
+            id: recipeID
+        });
+    };
+
     let [recipes, setRecipes] = useState([]);
+    let [recipesArray, setRecipesArray] = useState([]);
 
     useEffect(() => {
         const loadDatabase = async () => {
@@ -32,24 +40,29 @@ export default function HomeView({navigation}) {
 
             let currentRecipe = {
                 'id': result.recipe_id,
-                'name': result.name
+                'name': result.recipe_name
             };
 
-            recipes.push(currentRecipe);
+            recipesArray.push(currentRecipe);
+ n
         }
         });
+
+        setRecipes(recipesArray);
     });
 
     return (
         <View style = {styles.container}>
+        <Text>test</Text>
             <ScrollView>
-                <Text>RecipeList</Text>
-
-             {recipes.map((item, key)=>(
-                 <Text key={key}> { item.name } </Text>
-               ))
+             {recipes.map((item, key)=>
+                 (<View>
+                    <GiBeveledStar/>
+                    <Text key={key} style={styles.recipeItem} onPress={() => navigateToRecipe(item.id)}> { item.id} {item.name } </Text>
+                  </View>
+                 )
+               )
              }
-
             </ScrollView>
 
             <View style={globalStyles.stickyContainer} >
@@ -67,16 +80,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 0
+    paddingTop: 0,
+    paddingBottom: 50
   },
-  title: {
-  fontSize: 30
-  },
-  inp: {
-      height: 40,
-      width: 200,
-      margin: 12,
-      borderWidth: 1,
-      padding: 10
+  recipeItem: {
+    fontSize: 35,
+    width: Dimensions.get('screen').width,
+    marginLeft: 20
   }
 });
