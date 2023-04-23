@@ -17,15 +17,6 @@ export default function AddRecipe({ navigation }) {
     let [ingredientsArray, setIngredientsArray] = useState([]);
     let [selectedValue, setSelectedValue] = useState('');
 
-    handleIngredientChange = idx => e => {
-        const { name, value } = e.target;
-        const ingredients = [...ingredients];
-        ingredients[idx] = {
-          [name]: value
-        };
-        setIngredients(ingredients);
-    };
-
     handleAddIngredient = () => {
         const item = {
           name: "",
@@ -45,6 +36,7 @@ export default function AddRecipe({ navigation }) {
     const addRecipe = () => {
         insertRecipe(dbConnection, recipeName, description, degrees, cookingTime, ingredientsArray).then((data) => {
           }).catch((error) => alert(error.message));
+        navigation.navigate('Recipes');
     }
 
     return (

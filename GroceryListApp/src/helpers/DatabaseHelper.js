@@ -50,12 +50,34 @@ export const insertRecipe = (db, recipeName, instructions, degrees, time, ingred
 };
 
 export const getRecipe = (db, recipeID) => {
-  let [result, setResult] = useState('');//check if needed
-  const getRecipe = `SELECT * FROM recipe JOIN ingredient ON ingredient.recipe_id = recipe.recipe_id where recipe.recipe_id = ?`;
+  let [result, setResult] = useState('');
+  const getRecipe = `SELECT * FROM recipe where recipe.recipe_id = ?`;
 
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(getRecipe, [recipeID], (tx, result) => {resolve(result);},
+                    (error) => {reject(error);});
+    });
+  })
+};
+
+export const getIngredients = (db, recipeID) => {
+  const getRecipe = `SELECT * FROM ingredient where recipe_id = ?`;
+
+  return new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      tx.executeSql(getRecipe, [recipeID], (tx, result) => {
+           let ingredientsArray = [];
+           for (let i = 0; i < result.rows.length; i++) {
+                let ingredientObj = {
+                    'name': result.rows.item(i).name,
+                    'unit': result.rows.item(i).unit,
+                    'amount': result.rows.item(i).amount
+                };
+                ingredientsArray.push(ingredientObj);
+           }
+            resolve(ingredientsArray);
+      },
                     (error) => {reject(error);});
     });
   })

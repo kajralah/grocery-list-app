@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import { View, Button, StyleSheet, Text, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
+import { View, Button, StyleSheet, Text, TouchableOpacity, ScrollView, Dimensions, FlatList } from 'react-native';
 import globalStyles from '../styles/style';
 import {NavigationContainer} from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import {insertRecipe, createTables} from '../helpers/DatabaseHelper';
 import { openDatabase } from 'react-native-sqlite-storage';
-import { GiBeveledStar } from 'react-icons/gi';
+import AntIcon from "react-native-vector-icons/AntDesign";
 
 const dbConnection = openDatabase({ name: 'Recipes.db' });
 
@@ -22,6 +22,7 @@ export default function HomeView({navigation}) {
 
     let [recipes, setRecipes] = useState([]);
     let [recipesArray, setRecipesArray] = useState([]);
+    const [empty, setEmpty] = useState([]);
 
     useEffect(() => {
         const loadDatabase = async () => {
@@ -44,33 +45,47 @@ export default function HomeView({navigation}) {
             };
 
             recipesArray.push(currentRecipe);
- n
         }
         });
 
         setRecipes(recipesArray);
+        if (recipesArray.length >= 1) {
+            setEmpty(false);
+        } else {
+            setEmpty(true)
+        }
     });
 
-    return (
-        <View style = {styles.container}>
-        <Text>test</Text>
-            <ScrollView>
-             {recipes.map((item, key)=>
-                 (<View>
-                    <GiBeveledStar/>
-                    <Text key={key} style={styles.recipeItem} onPress={() => navigateToRecipe(item.id)}> { item.id} {item.name } </Text>
-                  </View>
-                 )
-               )
-             }
-            </ScrollView>
+     const emptyMSG = (status) => {
+        return (
+          <View>
+            <Text>No recipes</Text>
+          </View>
+        );
+      }
 
+    return (
+    <View>
+            <View style={{marginBottom: 50}}>
+                {empty ? emptyMSG(empty) :
+                    <FlatList
+                        data={recipes}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={(recipe) =>
+                          <View>
+                            <Text style={styles.recipeItem} onPress={() => navigateToRecipe(recipe.item.id)}> <AntIcon name="staro" color="black" size={30} /> {recipe.item.name } </Text>
+                          </View>
+                    }
+                  />
+                }
+
+            </View>
             <View style={globalStyles.stickyContainer} >
                 <TouchableOpacity style={globalStyles.button} onPress={navigateToAddRecipes}>
                     <Text>Add recipe</Text>
                 </TouchableOpacity>
             </View>
-         </View>
+        </View>
     );
 }
 
